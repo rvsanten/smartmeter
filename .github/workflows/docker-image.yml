@@ -16,8 +16,11 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker buildx build -t rvsanten/smartmeter:alpha --platform linux/amd64 --load .
-    - name: Login Docker 
-      run: docker login -u rvsanten -p ${{ secrets.DOCKER }}
+    - name: Log in to Docker Hub
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      with:
+        username: rvsanten
+        password: ${{ secrets.DOCKER }}
     - name: Push the Docker image
       run: docker push rvsanten/smartmeter:alpha
       
