@@ -16,7 +16,7 @@ interface MqttDiscoveryMessage {
     sw_version?: string;
   };
   device_class?: 'power' | 'current' | 'energy' | 'voltage';
-  state_class?: 'measurement';
+  state_class?: 'measurement' | 'total_increasing';
   json_attributes_topic: string;
   last_reset_value_template?: string;
   state_topic: string;
@@ -161,7 +161,7 @@ export default class MqttOutput implements Output {
       state_topic: `${this.config.prefix}/status/energy`,
       name: 'Current power usage',
       icon: 'mdi:transmission-tower',
-      unit_of_measurement: 'Watt',
+      unit_of_measurement: 'W',
       value_template: '{{ value_json.calculatedUsage }}',
       unique_id: `smartmeter_${data.powerSn}_current-usage`,
     };
@@ -193,6 +193,7 @@ export default class MqttOutput implements Output {
       description.value_template = '{{ value_json.totalT1Use }}';
       description.name = 'Total power used T1';
       description.device_class = 'energy';
+      description.state_class = 'total_increasing'; 
       if (this.config.last_reset) description.last_reset_value_template = '{{ value_json.last_reset }}';
       this.publishDiscoveryMessage(`${this.config.discoveryPrefix}/sensor/${this.config.prefix}/t1-used/config`, description);
     }
@@ -204,6 +205,7 @@ export default class MqttOutput implements Output {
       description.value_template = '{{ value_json.totalT2Use }}';
       description.name = 'Total power used T2';
       description.device_class = 'energy';
+      description.state_class = 'total_increasing';
       if (this.config.last_reset) description.last_reset_value_template = '{{ value_json.last_reset }}';
       this.publishDiscoveryMessage(`${this.config.discoveryPrefix}/sensor/${this.config.prefix}/t2-used/config`, description);
     }
@@ -215,6 +217,7 @@ export default class MqttOutput implements Output {
       description.value_template = '{{ value_json.totalT1Delivered }}';
       description.name = 'Total power delivered T1';
       description.device_class = 'energy';
+      description.state_class = 'total_increasing'; 
       if (this.config.last_reset) description.last_reset_value_template = '{{ value_json.last_reset }}';
       this.publishDiscoveryMessage(`${this.config.discoveryPrefix}/sensor/${this.config.prefix}/t1-delivered/config`, description);
     }
@@ -226,6 +229,7 @@ export default class MqttOutput implements Output {
       description.value_template = '{{ value_json.totalT2Delivered }}';
       description.name = 'Total power delivered T2';
       description.device_class = 'energy';
+      description.state_class = 'total_increasing'; 
       if (this.config.last_reset) description.last_reset_value_template = '{{ value_json.last_reset }}';
       this.publishDiscoveryMessage(`${this.config.discoveryPrefix}/sensor/${this.config.prefix}/t2-delivered/config`, description);
     }
@@ -289,7 +293,7 @@ export default class MqttOutput implements Output {
       name: 'Lifetime solar production',
       icon: 'mdi:solar-power',
       device_class: 'energy',
-      state_class: 'measurement',
+      state_class: 'total_increasing',
       value_template: '{{ value_json.lifetimeProductionKwh }}',
     };
     if (this.config.last_reset_solar) description.last_reset_value_template = '{{ value_json.last_reset }}';
